@@ -28,6 +28,17 @@ a{color:var(--accent-d)}
 .example-card img{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;background:#0f172a}
 .example-card figcaption{display:flex;align-items:center;gap:8px;margin:0;padding:10px 14px 12px;font-size:.92rem;font-weight:700;line-height:1.2;letter-spacing:.01em;color:#f8fafc;background:#0f172a}
 .example-card figcaption::before{content:"";width:8px;height:8px;border-radius:999px;background:var(--hl);box-shadow:0 0 0 3px rgba(94,234,212,.22);flex:none}
+.example-voice{position:relative;display:flex;flex-direction:column}
+.example-voice .voice-media{position:relative;order:1}
+.example-voice figcaption{order:2;padding-bottom:2px}
+.voice-sample-note{order:3;margin:0;padding:2px 14px 12px 30px;background:#0f172a;color:#99f6e4;font-size:.78rem;font-weight:600;line-height:1.35;overflow-wrap:break-word}
+.voice-toggle{position:absolute;z-index:1;left:10px;bottom:10px;width:44px;height:44px;display:grid;place-items:center;padding:0;border:1px solid rgba(94,234,212,.75);border-radius:999px;background:var(--accent);color:#fff;box-shadow:0 8px 18px rgba(2,6,23,.45);cursor:pointer}
+.voice-toggle:hover{background:var(--accent-d)}
+.voice-toggle[aria-pressed="true"]{background:var(--accent-d);box-shadow:0 0 0 3px rgba(94,234,212,.35),0 8px 18px rgba(2,6,23,.45)}
+.voice-toggle .icon-play{display:block;transform:translateX(1px)}
+.voice-toggle .icon-pause{display:none}
+.voice-toggle[aria-pressed="true"] .icon-play{display:none}
+.voice-toggle[aria-pressed="true"] .icon-pause{display:block}
 .examples-caption{margin:14px 0 0;color:#cbd5e1;font-size:.92rem}
 .eyebrow{text-transform:uppercase;letter-spacing:.14em;font-size:.8rem;font-weight:700;color:var(--hl);margin:0 0 14px}
 .hero h1{font-size:clamp(2.2rem,6vw,3.8rem);line-height:1.08;margin:0 0 20px;max-width:15ch}
@@ -76,6 +87,8 @@ h2{font-size:clamp(1.7rem,3.6vw,2.4rem);line-height:1.2;margin:0 0 10px}
   .example-avatar figcaption{top:12px;left:12px}
   .example-voice{top:112px;right:0;width:66%;transform:rotate(2.5deg);z-index:2}
   .example-voice figcaption{top:12px;right:12px}
+  .example-voice .voice-toggle{top:12px;bottom:auto;left:12px}
+  .example-voice .voice-sample-note{position:absolute;top:64px;left:12px;right:12px;margin:0;padding:6px 8px;border:1px solid rgba(94,234,212,.4);border-radius:10px;background:rgba(15,23,42,.92);box-shadow:0 8px 18px rgba(2,6,23,.35)}
   .example-likeness{left:6%;bottom:0;width:74%;transform:rotate(-1.5deg);z-index:3}
   .example-likeness figcaption{left:12px;bottom:12px}
   .examples-caption{margin:16px 0 0;text-align:center}
