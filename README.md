@@ -38,25 +38,9 @@ $49 = $20 deposit + $29 balance. That split is written on the page.
 
 ## Waitlist (Formspree)
 
-The form is wired to Formspree and does not store addresses in this repo. It will not accept signups until one placeholder is replaced.
+The form posts to https://formspree.io/f/mjywzjlw with `Accept: application/json`. It does not store addresses in this repo. The email field is `name="email"`, and an empty `_gotcha` field is included as a spam honeypot.
 
-In `index.html`, the form action is:
-
-```html
-action="https://formspree.io/f/REPLACE_WITH_FORMSPREE_ID"
-```
-
-`REPLACE_WITH_FORMSPREE_ID` is the only value to change.
-
-Gary, to turn it on:
-
-1. Create a free account at https://formspree.io and make a new form.
-2. Copy the form id. It is the short id in `https://formspree.io/f/xxxxxxxx`, not the whole URL.
-3. In `index.html`, replace `REPLACE_WITH_FORMSPREE_ID` with that id. Leave the rest of the action URL as it is.
-4. Deploy, submit a test address, and confirm the activation email Formspree sends to the account inbox.
-5. In the Formspree dashboard, set the notification address that should receive new signups.
-
-Until that id is in place, a visitor who submits sees: "Thanks for your interest. The waitlist isn't open for signups yet." After it is live, a successful signup hides the form and shows "You're on the list."
+A successful signup hides the form and shows "You're on the list." A failed request asks the visitor to try again.
 
 ## Custom domain
 

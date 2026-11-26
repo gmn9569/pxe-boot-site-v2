@@ -1,7 +1,5 @@
-// Waitlist posts to Formspree. The only setup value is the form id in
-// index.html (REPLACE_WITH_FORMSPREE_ID). Nothing is stored in this repo.
+// Waitlist posts to the Formspree action on the form. Nothing is stored in this repo.
 (function () {
-  var PLACEHOLDER_ID = 'REPLACE_WITH_FORMSPREE_ID';
   var form = document.getElementById('waitlist-form');
   var msg = document.getElementById('form-msg');
   var success = document.getElementById('form-success');
@@ -24,14 +22,6 @@
     }
   });
 
-  function formId() {
-    var action = form.getAttribute('action') || '';
-    var marker = '/f/';
-    var at = action.lastIndexOf(marker);
-    if (at === -1) return '';
-    return action.slice(at + marker.length).split(/[?#]/)[0].replace(/\/+$/, '');
-  }
-
   function setMsg(text, isError) {
     msg.hidden = false;
     msg.className = isError ? 'form-msg err' : 'form-msg';
@@ -46,11 +36,6 @@
       return;
     }
 
-    var id = formId();
-    if (!id || id === PLACEHOLDER_ID) {
-      setMsg("Thanks for your interest. The waitlist isn't open for signups yet.", false);
-      return;
-    }
     msg.hidden = true;
     msg.textContent = '';
 
