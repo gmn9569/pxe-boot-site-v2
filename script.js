@@ -1,23 +1,70 @@
-// PLACEHOLDER waitlist handler: nothing is sent or stored anywhere.
-// Replace with a real signup provider before launch.
+// Waitlist posts to the Formspree action on the form. Nothing is stored in this repo.
 (function () {
   var form = document.getElementById('waitlist-form');
   var msg = document.getElementById('form-msg');
+  var success = document.getElementById('form-success');
   var year = document.getElementById('year');
-  if (year) year.textContent = new Date().getFullYear();
-  if (!form) return;
+  if (year) year.textContent = String(new Date().getFullYear());
+  if (!form || !msg || !success) return;
+
+  var submitBtn = form.querySelector('button[type="submit"]');
+  var email = form.elements.email;
+  var defaultLabel = submitBtn ? submitBtn.textContent : 'Join the waitlist';
+
+  email.addEventListener('invalid', function (e) {
+    e.preventDefault();
+    setMsg('Please enter a valid email address.', true);
+  });
+  email.addEventListener('input', function () {
+    if (!msg.hidden && msg.classList.contains('err')) {
+      msg.hidden = true;
+      msg.textContent = '';
+    }
+  });
+
+  function setMsg(text, isError) {
+    msg.hidden = false;
+    msg.className = isError ? 'form-msg err' : 'form-msg';
+    msg.textContent = text;
+  }
+
   form.addEventListener('submit', function (e) {
     e.preventDefault();
-    var email = form.email;
     if (!email.value || !email.checkValidity()) {
-      msg.className = 'form-msg err';
-      msg.textContent = 'Please enter a valid email address.';
+      setMsg('Please enter a valid email address.', true);
       email.focus();
       return;
     }
-    msg.className = 'form-msg';
-    msg.textContent = "Thanks! Signups are coming soon. We'll open the waitlist shortly.";
-    form.reset();
+
+    msg.hidden = true;
+    msg.textContent = '';
+
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Joining…';
+    }
+    form.setAttribute('aria-busy', 'true');
+
+    fetch(form.action, {
+      method: 'POST',
+      body: new FormData(form),
+      headers: { Accept: 'application/json' }
+    }).then(function (res) {
+      if (!res.ok) throw new Error('waitlist');
+      form.hidden = true;
+      msg.hidden = true;
+      success.hidden = false;
+      var heading = success.querySelector('h3');
+      if (heading && heading.focus) heading.focus({ preventScroll: true });
+    }).catch(function () {
+      setMsg('Something went wrong sending that. Please try again in a moment.', true);
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = defaultLabel;
+      }
+    }).then(function () {
+      form.removeAttribute('aria-busy');
+    });
   });
 })();
 
