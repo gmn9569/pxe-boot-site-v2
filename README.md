@@ -4,6 +4,8 @@ Static one-page site for [pxe-boot.com](https://pxe-boot.com/). Plain HTML, CSS,
 
 The brand name is **PXE Boot**. `pxe-boot.com` is only the web address.
 
+Example characters live at `examples.html`, with one page per character in `models/`. Pictures and character bibles are in `images/models/<name>/`. Regenerate the pages from those bibles with `python3 tools/build_model_pages.py`.
+
 Preview locally:
 
 ```bash
