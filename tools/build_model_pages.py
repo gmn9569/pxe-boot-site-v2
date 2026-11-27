@@ -27,6 +27,33 @@ SHOTS = [
     ("cover.jpg", "Cover", "cover", False),
     ("thumbnail_1280x720.jpg", "Thumbnail", "thumbnail", False),
 ]
+# Customer-facing lines. The bible files keep production notes; these are what the site shows.
+PUBLIC = {
+    "isa": {
+        "card": "A composed character lead in crimson leather, gold hoops, and a high black ponytail.",
+        "intro": "Isa is a composed, glamorous character lead. Crimson leather, gold hoops, red lipstick, and a high black ponytail. The same face shows up in every picture.",
+    },
+    "bea": {
+        "card": "A warm, unhurried host with a silver braid, round glasses, and a mustard cardigan.",
+        "intro": "Bea is a warm, unhurried host. Silver-streaked hair in a loose braid, round glasses, and a mustard cardigan over a cream turtleneck.",
+    },
+    "hex": {
+        "card": "A calm night courier with a cyan visor pushed up and rain on a black tech jacket.",
+        "intro": "Hex is a calm night courier. Grey at the temples, a short beard, a cyan visor pushed up, and rain on a black tech jacket.",
+    },
+    "mochi": {
+        "card": "A bright streamer with lilac hair, a glowing cat-ear headset, and a lavender hoodie.",
+        "intro": "Mochi is a bright, playful streamer. Lilac hair, a glowing cat-ear headset, and an oversized lavender hoodie.",
+    },
+    "rook": {
+        "card": "A cool-headed night driver in a plain orange and black jacket.",
+        "intro": "Rook is a cool-headed night driver. A crisp fade, a slight smirk, and a plain orange and black jacket.",
+    },
+    "tala": {
+        "card": "A focused competitor in a lime-trimmed jersey, headset resting at her neck.",
+        "intro": "Tala is a focused competitor. Dark curly hair in a high bun, a lime-trimmed jersey, and a headset resting at her neck.",
+    },
+}
 LIKENESS = {
     "likeness_turtleneck.jpg": (
         "Likeness · black turtleneck",
@@ -121,17 +148,22 @@ def markdown_to_html(source):
     return "\n".join(out)
 
 
-def concept_paragraph(source):
-    match = re.search(r"^## Concept\s*\n+(.+?)(?:\n\s*\n|\n## )", source, re.M | re.S)
-    if not match:
-        raise SystemExit("Missing concept section")
-    text = " ".join(line.strip() for line in match.group(1).strip().splitlines())
-    return text
-
-
-def first_sentence(text):
-    match = re.match(r"(.+?\.)\s", text + " ")
-    return match.group(1) if match else text
+def public_bible(source, intro):
+    """Drop the production status lines and replace the concept with public copy."""
+    source = re.sub(
+        r"(^# [^\n]+\n)\n.*?(?=^## )",
+        r"\1\n",
+        source,
+        count=1,
+        flags=re.M | re.S,
+    )
+    return re.sub(
+        r"^## Concept\s*\n\n.*?(?=^## )",
+        "## Concept\n\n" + intro.strip() + "\n\n",
+        source,
+        count=1,
+        flags=re.M | re.S,
+    )
 
 
 def chrome(title, description, canonical, depth, current, body):
@@ -219,8 +251,10 @@ def build_model(slug):
     bible_path = folder / "bible.md"
     source = bible_path.read_text(encoding="utf-8")
     name = NAMES[slug]
-    concept = concept_paragraph(source)
-    summary = first_sentence(concept)
+    copy = PUBLIC[slug]
+    intro = copy["intro"]
+    summary = copy["card"]
+    rendered = public_bible(source, intro)
     asset = f"../images/models/{slug}"
     shots = []
     for filename, label, role, wide in SHOTS:
@@ -270,13 +304,13 @@ def build_model(slug):
       <p class="crumb"><a href="../examples.html">Examples</a> <span aria-hidden="true">/</span> {html.escape(name)}</p>
       <p class="eyebrow on-light">Character Identity Pack example</p>
       <h1>{html.escape(name)}</h1>
-      <p class="lead">{html.escape(concept)}</p>
+      <p class="lead">{html.escape(intro)}</p>
       <div class="shot-grid" aria-label="{html.escape(name)} pack pictures">
         {''.join(shots)}
       </div>
       {likeness}
       <div class="bible">
-        {markdown_to_html(source)}
+        {markdown_to_html(rendered)}
       </div>
       <p class="bible-download"><a href="{asset}/bible.md" download>Download the character bible (Markdown)</a></p>
       <div class="cta-row model-cta">
@@ -312,9 +346,9 @@ def build_index(cards):
         </a>"""
         )
     body = f"""<div class="wrap">
-      <p class="eyebrow on-light">Sample lineup</p>
+      <p class="eyebrow on-light">Characters</p>
       <h1>Example characters</h1>
-      <p class="lead">Fictional adult characters used as safe-for-work samples of an avatar, a banner, a thumbnail, and a cover. Isa is first. None of them are real people.</p>
+      <p class="lead">Six fictional characters. Each page shows an avatar, a banner, a thumbnail, and a cover. Isa is first. None of them are real people.</p>
       <div class="example-index">
         {''.join(items)}
       </div>
@@ -324,7 +358,7 @@ def build_index(cards):
     </div>"""
     page = chrome(
         "Example characters | PXE Boot",
-        "Sample PXE Boot characters: Isa, Bea, Hex, Mochi, Rook, and Tala. Fictional, safe for work, and not based on real people.",
+        "Meet Isa, Bea, Hex, Mochi, Rook, and Tala. Fictional characters from PXE Boot.",
         "https://pxe-boot.com/examples.html",
         0,
         "examples",
